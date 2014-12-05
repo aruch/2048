@@ -2,9 +2,16 @@
 
 import numpy as np
 
-GRID_SIZE = (5,5)
+GRID_SIZE = (4,4)
 PROB_2 = 0.9
 
+def pos(i, j, flip=False):
+    """accessory function to access by column and row instead of row and column"""
+    if flip:
+        return (j, i)
+    else:
+        return (i, j)
+        
 class Board:
     """Represents the board of the game 2048
 
@@ -27,9 +34,13 @@ class Board:
         Initialized probability of generating a 2
     """
     def __init__(self, grid_size=GRID_SIZE, prob_2=PROB_2):
-        """ones represent empty spaces"""
-        self.grid = np.ones(grid_size)
+        """Initialize board by creating an array of shape grid_size.
 
+        grid_size is assumed to be the same in both dimensions"""
+        self.grid = np.ones(grid_size)
+        self.prob_2 = prob_2
+
+        
     def move(self, d):
         """Moves the tiles in the direction specified
 
@@ -41,22 +52,44 @@ class Board:
             The direction to move the tiles on the grid in ["left", "right", "up", "down"]
         """
 
-        for i in range(self.grid.shape[0]):
-            first_empty = 0
-            compressed = True
-            for j in range(self.grid.shape[1]):
-                if self.grid[i, j] != 1:
-                    if (not compressed and
-                        self.grid[i, first_empty - 1] == self.grid[i, j]):
+        if d == "left" :
+            start = 0
+            stop = self.grid.shape[0]
+            inc = 1
+            flip = False
+        elif d == "right" :
+            start = self.grid.shape[0] -1
+            stop = -1
+            inc = -1
+            flip = False
+        elif d == "up":
+            start = 0
+            stop = self.grid.shape[0]
+            inc = 1
+            flip = True
+        elif d == "down":
+            start = self.grid.shape[0] -1
+            stop = -1
+            inc = -1
+            flip = True
 
-                        self.grid[i, first_empty - 1] *= 2
-                        self.grid[i, j] = 1
+        for i in range(self.grid.shape[0]):
+            first_empty = start
+            compressed = True
+            for j in range(start, stop, inc):
+                if self.grid[pos(i, j, flip)] != 1:
+                    if (not compressed and
+                        self.grid[pos(i, first_empty - inc, flip)] ==
+                        self.grid[pos(i, j, flip)]):
+
+                        self.grid[pos(i, first_empty - inc, flip)] *= 2
+                        self.grid[pos(i, j, flip)] = 1
                         compressed = True
                     elif j != first_empty:
-                        self.grid[i, first_empty] = self.grid[i, j]
-                        self.grid[i, j] = 1
-                        first_empty += 1
+                        self.grid[pos(i, first_empty, flip)] = self.grid[pos(i, j, flip)]
+                        self.grid[pos(i, j, flip)] = 1
+                        first_empty += inc
                         compressed = False
                     else:
-                        first_empty += 1
+                        first_empty += inc
                         compressed = False
