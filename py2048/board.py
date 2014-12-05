@@ -76,6 +76,14 @@ class Board:
         for i in range(self.grid.shape[0]):
             first_empty = start
             compressed = True
+            # traverse the row/column in the opposite direction of the move
+            # move tiles to the first empty space seen, or if the last move didn't
+            # result in a merge of two tiles check if the first non-empty space contains
+            # a tile with the same value as the one being moved.  If that is the case
+            # combine the two tiles together into one.
+            #
+            # When moving "up" or "down" flip the indices so that access is done (column, row)
+            # instead of (row, column)
             for j in range(start, stop, inc):
                 if self.grid[pos(i, j, flip)] != 1:
                     if (not compressed and
@@ -93,3 +101,13 @@ class Board:
                     else:
                         first_empty += inc
                         compressed = False
+
+    def n_empty_tiles(self):
+        """Calculates the number of empty tiles currently on the board"""
+
+        return np.sum(self.grid == 1)
+
+    def empty_tiles(self):
+        """Returns a list of tuples of the positions of the empty tiles"""
+
+        return list(zip(*np.where(self.grid == 1)))
