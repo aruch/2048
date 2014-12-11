@@ -48,6 +48,9 @@ class Board:
         self.game_over = False
         self.score = 0
 
+        self.add_random_tile()
+        self.add_random_tile()
+
     def move(self, d, check_only=False):
         """Moves the tiles in the direction specified, or checks if a
         move could be made in that direction.
