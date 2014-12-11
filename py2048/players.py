@@ -5,7 +5,16 @@ import copy
 import numpy as np
 
 class Player:
-    """ A parent class for the other AI players """
+    """ A parent class for the other AI players.
+
+    The general use for each subclass should be the same with only
+    the initiation of the class differing.
+
+    Example Usage:
+    >>> p = Player()
+    >>> p.play(verbose=True)
+    """
+
     def __init__(self):
         self.b = Board()
 
@@ -111,7 +120,7 @@ class ExpectimaxPlayer(Player):
     ----------
     depth : int
         Maximum number of turns before stopping. This value is either
-        increased by one of decreased by one if there are few or many
+        increased by one or decreased by one if there are few or many
         open tiles.
 
     h_weights : numpy.array
@@ -190,5 +199,7 @@ class ExpectimaxPlayer(Player):
                       self.b.n_out_of_order(), self.b.score])
         return self.h_weights.dot(h**self.h_exp)
 
-a = ExpectimaxPlayer(2, np.array([-0.1, 40, -1, 1]), np.array([1, 0.5, 1, 1]))
-a.play(verbose=True)
+
+if __name__ == "__main__":
+    p = ExpectimaxPlayer(2)
+    p.play(verbose=True)
